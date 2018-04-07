@@ -1,0 +1,10 @@
+library antivm;
+
+{$mode objfpc}{$H+}
+
+uses
+  cthreads, Classes, sysutils, JNI2;
+
+begin
+end.
+
