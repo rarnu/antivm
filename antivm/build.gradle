@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}
+
+
+//task buildNDK(dependsOn: preBuild) {
+//    print("before build")
+//    exec {
+//        workingDir 'src/main/jni/'
+//        commandLine 'fpccmd', 'AA', 'antivm.ppr'
+//    }
+//}
+
+project.gradle.startParameter.excludedTaskNames.add('compileDebugNdk')
+project.gradle.startParameter.excludedTaskNames.add('compileReleaseNdk')

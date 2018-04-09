@@ -25,7 +25,7 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <Units Count="5">
+    <Units Count="9">
       <Unit0>
         <Filename Value="antivm.ppr"/>
         <IsPartOfProject Value="True"/>
@@ -46,6 +46,22 @@
         <Filename Value="untFile.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="untRoot.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="untInVM.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="untContext.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="untHook.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -60,6 +76,11 @@
     <CodeGeneration>
       <RelocatableUnit Value="True"/>
     </CodeGeneration>
+    <Linking>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

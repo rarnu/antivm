@@ -1,5 +1,5 @@
-{$define debug}
-{.$define release}
+{.$define debug}
+{$define release}
 
 {$ifdef debug}
 program antivm;
@@ -12,33 +12,39 @@ library antivm;
 
 uses
   cthreads, Classes, sysutils, JNI2, untProp, untEmulator, math, untGLString,
-  untFile;
+  untFile, untRoot, untInVM, untContext, untHook;
 
 {$ifdef release}
 function Java_com_rarnu_AntiVM_isEmulator(env: PJNIEnv; obj: jobject): jboolean; cdecl;
 var
   ret: Boolean;
 begin
-  ret := isEmulator();
+  ret := isEmulator(env);
   Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
 end;
 
 function Java_com_rarnu_AntiVM_isHooked(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+var
+  ret: Boolean;
 begin
-  // TODO: is hooked
-  Exit(JNI_FALSE);
+  ret := isHooked();
+  Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
 end;
 
 function Java_com_rarnu_AntiVM_isInVM(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+var
+  ret: Boolean;
 begin
-  // TODO: is in vm
-  Exit(JNI_FALSE);
+  ret := isInVM(env);
+  Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
 end;
 
 function Java_com_rarnu_AntiVM_isRooted(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+var
+  ret: Boolean;
 begin
-  // TODO: is rooted
-  Exit(JNI_FALSE);
+  ret := isRooted();
+  Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
 end;
 
 exports
