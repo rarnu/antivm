@@ -1,0 +1,5 @@
+_Java_com_rarnu_AntiVM_isRooted
+_Java_com_rarnu_AntiVM_isInVM
+_Java_com_rarnu_AntiVM_isHooked
+_Java_com_rarnu_AntiVM_isEmulator
+_Java_com_rarnu_AntiVM_init

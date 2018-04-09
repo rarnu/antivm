@@ -5,41 +5,80 @@ unit untProp;
 interface
 
 uses
-  Classes, SysUtils, process;
+  Classes, SysUtils, JNI2, untGLString, untFile, untContext;
 
-const
-  KEY_PRODUCT = 'ro.product.name';
-  KEY_MANUFACTURER = 'ro.product.manufacturer';
-  KEY_DEVICE = 'ro.product.device';
-  KEY_MODEL = 'ro.product.model';
-  KEY_HARDWARE = 'ro.hardware';
-  KEY_FINGERPRINT = 'ro.build.fingerprint';
-  KEY_BRAND = 'ro.product.brand';
-  KEY_TAGS = 'ro.build.tags';
+procedure loadProp(env: PJNIEnv);
 
 var
-  propList: TStringList;
+  P_PRODUCT: string = '';
+  P_MANUFACTURER: string = '';
+  P_BRAND: string = '';
+  P_DEVICE: string = '';
+  P_MODEL: string = '';
+  P_HARDWARE: string = '';
+  P_FINGERPRINT: string = '';
+  P_TAGS: string = '';
+  P_OPENGL: string = '';
+  P_SHARED_FOLDER_EXISTS: Boolean = False;
+  P_DATAPATH: string = '';
+  P_PKGNAME: string = '';
 
 implementation
 
-procedure loadProp();
+procedure loadProp(env: PJNIEnv);
 var
-  outstr: string = '';
-  i: Integer;
+  jBuild: jclass;
+  jf: jfieldID;
+
+  ctx: jobject;
+  jContext: jclass;
+  jGetFilesDir: jmethodID;
+  oFile: jobject;
+  jFile: jclass;
+  jGetAbsolutePath: jmethodID;
+  jPath: jstring;
+  jGetPackageName: jmethodID;
+  jPkgName: jstring;
+
 begin
-  // TODO: not work under android O above, need change
-  RunCommand('getprop', [], outstr, [poWaitOnExit, poUsePipes]);
-  outstr:= outstr.Replace(']: [', '=', [rfIgnoreCase, rfReplaceAll]);
-  propList.Text:= outstr;
-  for i := 0 to propList.Count - 1 do propList[i] := propList[i].Trim(['[', ']']);
+  P_OPENGL:= getGLString(env);
+  P_SHARED_FOLDER_EXISTS:= sharedFolderExists(env);
+  jBuild:= env^^.FindClass(env, 'android/os/Build');
+  jf:= env^^.GetStaticFieldID(env, jBuild, 'PRODUCT', 'Ljava/lang/String;');
+  P_PRODUCT := TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'MANUFACTURER', 'Ljava/lang/String;');
+  P_MANUFACTURER:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'BRAND', 'Ljava/lang/String;');
+  P_BRAND:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'DEVICE', 'Ljava/lang/String;');
+  P_DEVICE:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'MODEL', 'Ljava/lang/String;');
+  P_MODEL:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'HARDWARE', 'Ljava/lang/String;');
+  P_HARDWARE:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'FINGERPRINT', 'Ljava/lang/String;');
+  P_FINGERPRINT:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  jf := env^^.GetStaticFieldID(env, jBuild, 'TAGS', 'Ljava/lang/String;');
+  P_TAGS:= TJNIEnv.JStringToString(env, env^^.GetStaticObjectField(env, jBuild, jf));
+  env^^.DeleteLocalRef(env, jBuild);
+
+  ctx := getContext(env);
+  jContext:= env^^.FindClass(env, 'android/content/Context');
+  jGetFilesDir:= env^^.GetMethodID(env, jContext, 'getFilesDir', '()Ljava/io/File;');
+  oFile:= env^^.CallObjectMethod(env, ctx, jGetFilesDir);
+  jFile := env^^.FindClass(env, 'java/io/File');
+  jGetAbsolutePath:= env^^.GetMethodID(env, jFile, 'getAbsolutePath', '()Ljava/lang/String;');
+  jPath:= env^^.CallObjectMethod(env, oFile, jGetAbsolutePath);
+  P_DATAPATH := TJNIEnv.JStringToString(env, jPath);
+
+  jGetPackageName:= env^^.GetMethodID(env, jContext, 'getPackageName', '()Ljava/lang/String;');
+  jPkgName:= env^^.CallObjectMethod(env, ctx, jGetPackageName);
+  P_PKGNAME:= TJNIEnv.JStringToString(env, jPkgName);
+
+  env^^.DeleteLocalRef(env, jContext);
+  env^^.DeleteLocalRef(env, oFile);
+  env^^.DeleteLocalRef(env, ctx);
 end;
-
-initialization
-  propList := TStringList.Create;
-  loadProp();
-
-finalization
-  propList.Free;
 
 end.
 

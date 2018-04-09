@@ -1,5 +1,7 @@
 package com.rarnu
 
+import android.os.Build
+
 object AntiVM {
     init {
         try {
@@ -8,6 +10,8 @@ object AntiVM {
 
         }
     }
+
+    external fun init()
     external fun isEmulator(): Boolean
     external fun isHooked(): Boolean
     external fun isInVM(): Boolean

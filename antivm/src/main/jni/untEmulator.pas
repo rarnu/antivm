@@ -5,137 +5,124 @@ unit untEmulator;
 interface
 
 uses
-  Classes, SysUtils, JNI2, untProp, untGLString, untFile;
+  Classes, SysUtils, untProp;
 
-function isEmulator(env: PJNIEnv): Boolean;
+function isEmulator(): Boolean;
 
 implementation
 
 function isEmulatorAbsolutely(): Boolean;
-var
-  product, manufacturer, brand, device, model, hardware, fingerprint: string;
 begin
-  product:= propList.Values[KEY_PRODUCT];
-  if (product.Contains('sdk') or
-    product.Contains('sdk_x86') or
-    product.Contains('sdk_google') or
-    product.Contains('Andy') or
-    product.Contains('Droid4X') or
-    product.Contains('nox') or
-    product.Contains('vbox86p') or
-    product.Contains('aries')) then Exit(True);
-  manufacturer:= propList.Values[KEY_MANUFACTURER];
-  if ((manufacturer = 'Genymotion') or
-    manufacturer.Contains('Andy') or
-    manufacturer.Contains('nox') or
-    manufacturer.Contains('TiantianVM')) then Exit(True);
-  brand:= propList.Values[KEY_BRAND];
-  if (brand.Contains('Andy')) then Exit(True);
-  device:=  propList.Values[KEY_DEVICE];
-  if (device.Contains('Andy') or
-    device.Contains('Droid4X') or
-    device.Contains('nox') or
-    device.Contains('vbox86p') or
-    device.Contains('aries')) then Exit(True);
-  model:= propList.Values[KEY_MODEL];
-  if (model.Contains('Emulator') or
-    (model = 'google_sdk') or
-    model.Contains('Droid4X') or
-    model.Contains('TiantianVM') or
-    model.Contains('Andy') or
-    (model = 'Android SDK built for x86_64') or
-    (model = 'Android SDK built for x86')) then Exit(True);
-  hardware:= propList.Values[KEY_HARDWARE];
-  if ((hardware = 'vbox86') or
-    hardware.Contains('nox') or
-    hardware.Contains('ttVM_x86')) then Exit(True);
-  fingerprint:= propList.Values[KEY_FINGERPRINT];
-  if (fingerprint.Contains('generic/sdk/generic') or
-    fingerprint.Contains('generic_x86/sdk_x86/generic_x86') or
-    fingerprint.Contains('Andy') or
-    fingerprint.Contains('ttVM_Hdragon') or
-    fingerprint.Contains('generic/google_sdk/generic') or
-    fingerprint.Contains('vbox86p') or
-    fingerprint.Contains('generic/vbox86p/vbox86p')) then Exit(True);
+  if (P_PRODUCT.Contains('sdk') or
+    P_PRODUCT.Contains('sdk_x86') or
+    P_PRODUCT.Contains('sdk_google') or
+    P_PRODUCT.Contains('Andy') or
+    P_PRODUCT.Contains('Droid4X') or
+    P_PRODUCT.Contains('nox') or
+    P_PRODUCT.Contains('vbox86p') or
+    P_PRODUCT.Contains('aries')) then Exit(True);
+
+  if ((P_MANUFACTURER = 'Genymotion') or
+    P_MANUFACTURER.Contains('Andy') or
+    P_MANUFACTURER.Contains('nox') or
+    P_MANUFACTURER.Contains('TiantianVM')) then Exit(True);
+
+  if (P_BRAND.Contains('Andy')) then Exit(True);
+
+  if (P_DEVICE.Contains('Andy') or
+    P_DEVICE.Contains('Droid4X') or
+    P_DEVICE.Contains('nox') or
+    P_DEVICE.Contains('vbox86p') or
+    P_DEVICE.Contains('aries')) then Exit(True);
+
+  if (P_MODEL.Contains('Emulator') or
+    (P_MODEL = 'google_sdk') or
+    P_MODEL.Contains('Droid4X') or
+    P_MODEL.Contains('TiantianVM') or
+    P_MODEL.Contains('Andy') or
+    (P_MODEL = 'Android SDK built for x86_64') or
+    (P_MODEL = 'Android SDK built for x86')) then Exit(True);
+
+  if ((P_HARDWARE = 'vbox86') or
+    P_HARDWARE.Contains('nox') or
+    P_HARDWARE.Contains('ttVM_x86')) then Exit(True);
+
+  if (P_FINGERPRINT.Contains('generic/sdk/generic') or
+    P_FINGERPRINT.Contains('generic_x86/sdk_x86/generic_x86') or
+    P_FINGERPRINT.Contains('Andy') or
+    P_FINGERPRINT.Contains('ttVM_Hdragon') or
+    P_FINGERPRINT.Contains('generic/google_sdk/generic') or
+    P_FINGERPRINT.Contains('vbox86p') or
+    P_FINGERPRINT.Contains('generic/vbox86p/vbox86p')) then Exit(True);
   Exit(False);
 end;
 
-function isEmulator(env: PJNIEnv): Boolean;
+function isEmulator(): Boolean;
 var
   rating: Integer = 0;
-  product, manufacturer, brand, device, model, hardware, fingerprint, opengl: string;
-  sharedExists: Boolean;
 begin
   if (isEmulatorAbsolutely()) then Exit(True);
-  product:= propList.Values[KEY_PRODUCT];
-  if (product.Contains('sdk') or
-    product.Contains('Andy') or
-    product.Contains('ttVM_Hdragon') or
-    product.Contains('google_sdk') or
-    product.Contains('Droid4X') or
-    product.Contains('nox') or
-    product.Contains('sdk_x86') or
-    product.Contains('sdk_google') or
-    product.Contains('vbox86p') or
-    product.Contains('aries')) then Inc(rating);
 
-  manufacturer := propList.Values[KEY_MANUFACTURER];
-  if ((manufacturer = 'unknown') or
-    (manufacturer = 'Genymotion') or
-    manufacturer.Contains('Andy') or
-    manufacturer.Contains('MIT') or
-    manufacturer.Contains('nox') or
-    manufacturer.Contains('TiantianVM')) then Inc(rating);
+  if (P_PRODUCT.Contains('sdk') or
+    P_PRODUCT.Contains('Andy') or
+    P_PRODUCT.Contains('ttVM_Hdragon') or
+    P_PRODUCT.Contains('google_sdk') or
+    P_PRODUCT.Contains('Droid4X') or
+    P_PRODUCT.Contains('nox') or
+    P_PRODUCT.Contains('sdk_x86') or
+    P_PRODUCT.Contains('sdk_google') or
+    P_PRODUCT.Contains('vbox86p') or
+    P_PRODUCT.Contains('aries')) then Inc(rating);
 
-  brand:= propList.Values[KEY_BRAND];
-  if ((brand  = 'generic') or
-    (brand = 'generic_x86') or
-    (brand = 'TTVM') or
-    brand.Contains('Andy')) then Inc(rating);
+  if ((P_MANUFACTURER = 'unknown') or
+    (P_MANUFACTURER = 'Genymotion') or
+    P_MANUFACTURER.Contains('Andy') or
+    P_MANUFACTURER.Contains('MIT') or
+    P_MANUFACTURER.Contains('nox') or
+    P_MANUFACTURER.Contains('TiantianVM')) then Inc(rating);
 
-  device:= propList.Values[KEY_DEVICE];
-  if (device.Contains('generic') or
-    device.Contains('generic_x86') or
-    device.Contains('Andy') or
-    device.Contains('ttVM_Hdragon') or
-    device.Contains('Droid4X') or
-    device.Contains('nox') or
-    device.Contains('generic_x86_64') or
-    device.Contains('vbox86p') or
-    device.Contains('aries')) then Inc(rating);
+  if ((P_BRAND  = 'generic') or
+    (P_BRAND = 'generic_x86') or
+    (P_BRAND = 'TTVM') or
+    P_BRAND.Contains('Andy')) then Inc(rating);
 
-  model:= propList.Values[KEY_MODEL];
-  if ((model = 'sdk') or
-    model.Contains('Emulator') or
-    (model = 'google_sdk') or
-    model.Contains('Droid4X') or
-    model.Contains('TiantianVM') or
-    model.Contains('Andy') or
-    (model = 'Android SDK built for x86_64') or
-    (model = 'Android SDK built for x86')) then Inc(rating);
+  if (P_DEVICE.Contains('generic') or
+    P_DEVICE.Contains('generic_x86') or
+    P_DEVICE.Contains('Andy') or
+    P_DEVICE.Contains('ttVM_Hdragon') or
+    P_DEVICE.Contains('Droid4X') or
+    P_DEVICE.Contains('nox') or
+    P_DEVICE.Contains('generic_x86_64') or
+    P_DEVICE.Contains('vbox86p') or
+    P_DEVICE.Contains('aries')) then Inc(rating);
 
-  hardware:= propList.Values[KEY_HARDWARE];
-  if ((hardware = 'goldfish') or
-    (hardware = 'vbox86') or
-    hardware.Contains('nox') or
-    hardware.Contains('ttVM_x86')) then Inc(rating);
+  if ((P_MODEL = 'sdk') or
+    P_MODEL.Contains('Emulator') or
+    (P_MODEL = 'google_sdk') or
+    P_MODEL.Contains('Droid4X') or
+    P_MODEL.Contains('TiantianVM') or
+    P_MODEL.Contains('Andy') or
+    (P_MODEL = 'Android SDK built for x86_64') or
+    (P_MODEL = 'Android SDK built for x86')) then Inc(rating);
 
-  fingerprint:= propList.Values[KEY_FINGERPRINT];
-  if (fingerprint.Contains('generic/sdk/generic') or
-    fingerprint.Contains('generic_x86/sdk_x86/generic_x86') or
-    fingerprint.Contains('Andy') or
-    fingerprint.Contains('ttVM_Hdragon') or
-    fingerprint.Contains('generic_x86_64') or
-    fingerprint.Contains('generic/google_sdk/generic') or
-    fingerprint.Contains('vbox86p') or
-    fingerprint.Contains('generic/vbox86p/vbox86p')) then Inc(rating);
+  if ((P_HARDWARE = 'goldfish') or
+    (P_HARDWARE = 'vbox86') or
+    P_HARDWARE.Contains('nox') or
+    P_HARDWARE.Contains('ttVM_x86')) then Inc(rating);
 
-  opengl:= getGLString(env);
-  if (opengl.Contains('Bluestacks') or
-    opengl.Contains('Translator')) then Inc(rating, 10);
+  if (P_FINGERPRINT.Contains('generic/sdk/generic') or
+    P_FINGERPRINT.Contains('generic_x86/sdk_x86/generic_x86') or
+    P_FINGERPRINT.Contains('Andy') or
+    P_FINGERPRINT.Contains('ttVM_Hdragon') or
+    P_FINGERPRINT.Contains('generic_x86_64') or
+    P_FINGERPRINT.Contains('generic/google_sdk/generic') or
+    P_FINGERPRINT.Contains('vbox86p') or
+    P_FINGERPRINT.Contains('generic/vbox86p/vbox86p')) then Inc(rating);
 
-  sharedExists := sharedFolderExists(env);
-  if (sharedExists) then Inc(rating, 10);
+  if (P_OPENGL.Contains('Bluestacks') or
+    P_OPENGL.Contains('Translator')) then Inc(rating, 10);
+
+  if (P_SHARED_FOLDER_EXISTS) then Inc(rating, 10);
 
   Exit(rating > 3);
 end;

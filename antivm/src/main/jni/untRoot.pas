@@ -12,11 +12,8 @@ function isRooted(): Boolean;
 implementation
 
 function isDeviceDebugable(): Boolean;
-var
-  tags: string;
 begin
-  tags:= propList.Values[KEY_TAGS];
-  Exit(tags.Contains('test-keys'));
+  Exit(P_TAGS.Contains('test-keys'));
 end;
 
 function isSuperuserExists(): Boolean;

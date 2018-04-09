@@ -11,15 +11,21 @@ library antivm;
 {$mode objfpc}{$H+}
 
 uses
-  cthreads, Classes, sysutils, JNI2, untProp, untEmulator, math, untGLString,
-  untFile, untRoot, untInVM, untContext, untHook;
+  cthreads, Classes, sysutils, JNI2, untProp, untEmulator, math,
+  untRoot, untInVM, untHook;
 
 {$ifdef release}
+
+procedure Java_com_rarnu_AntiVM_init(env: PJNIEnv; obj: jobject); cdecl;
+begin
+  loadProp(env);
+end;
+
 function Java_com_rarnu_AntiVM_isEmulator(env: PJNIEnv; obj: jobject): jboolean; cdecl;
 var
   ret: Boolean;
 begin
-  ret := isEmulator(env);
+  ret := isEmulator();
   Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
 end;
 
@@ -48,6 +54,7 @@ begin
 end;
 
 exports
+  Java_com_rarnu_AntiVM_init,
   Java_com_rarnu_AntiVM_isEmulator,
   Java_com_rarnu_AntiVM_isHooked,
   Java_com_rarnu_AntiVM_isInVM,

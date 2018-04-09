@@ -19,7 +19,7 @@ var
 begin
   jGLES20 := env^^.FindClass(env, 'android/opengl/GLES20');
   jGlGetString:= env^^.GetStaticMethodID(env, jGLES20, 'glGetString', '(I)Ljava/lang/String;');
-  jRet:= env^^.CallStaticObjectMethodA(env, jGLES20, jGlGetString, TJNIEnv.ArgsToJValues(env, [$1F01]));
+  jRet:= env^^.CallStaticObjectMethodA(env, jGLES20, jGlGetString, TJNIEnv.ArgsToJValues(env, [7937]));
   env^^.DeleteLocalRef(env, jGLES20);
   Exit(TJNIEnv.JStringToString(env, jRet));
 end;
