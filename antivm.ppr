@@ -1,10 +1,83 @@
+{$define debug}
+{.$define release}
+
+{$ifdef debug}
+program antivm;
+{$endif}
+{$ifdef release}
 library antivm;
+{$endif}
 
 {$mode objfpc}{$H+}
 
 uses
-  cthreads, Classes, sysutils, JNI2;
+  cthreads, Classes, sysutils, JNI2, untProp, untEmulator, math, untGLString,
+  untFile;
 
+{$ifdef release}
+function Java_com_rarnu_AntiVM_isEmulator(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+var
+  ret: Boolean;
 begin
+  ret := isEmulator();
+  Exit(ifthen(ret, JNI_TRUE, JNI_FALSE));
+end;
+
+function Java_com_rarnu_AntiVM_isHooked(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+begin
+  // TODO: is hooked
+  Exit(JNI_FALSE);
+end;
+
+function Java_com_rarnu_AntiVM_isInVM(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+begin
+  // TODO: is in vm
+  Exit(JNI_FALSE);
+end;
+
+function Java_com_rarnu_AntiVM_isRooted(env: PJNIEnv; obj: jobject): jboolean; cdecl;
+begin
+  // TODO: is rooted
+  Exit(JNI_FALSE);
+end;
+
+exports
+  Java_com_rarnu_AntiVM_isEmulator,
+  Java_com_rarnu_AntiVM_isHooked,
+  Java_com_rarnu_AntiVM_isInVM,
+  Java_com_rarnu_AntiVM_isRooted;
+
+{$endif}
+
+{$ifdef debug}
+procedure writeHelp();
+begin
+  WriteLn('usage: antivm <option>');
+  WriteLn('  -kt    generate kotlin header');
+  WriteLn('  -java  generate java header');
+  WriteLn('  -v     view exported functions');
+  WriteLn('');
+end;
+
+var
+  opt: string;
+{$endif}
+begin
+  {$ifdef debug}
+  opt := ParamStr(1);
+  if (opt = '') then begin
+    writeHelp();
+    Exit;
+  end;
+  if (opt = '-kt') then begin
+    // TODO: generate kotlin header
+  end else if (opt = '-java') then begin
+    // TODO: generate java header
+  end else if (opt = '-v') then begin
+    // TODO: view exported functions
+  end else begin
+    writeHelp();
+  end;
+  {$endif}
 end.
 

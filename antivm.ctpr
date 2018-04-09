@@ -25,11 +25,27 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <Units Count="1">
+    <Units Count="5">
       <Unit0>
         <Filename Value="antivm.ppr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="untProp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="untEmulator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="untGLString.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="untFile.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -44,11 +60,6 @@
     <CodeGeneration>
       <RelocatableUnit Value="True"/>
     </CodeGeneration>
-    <Linking>
-      <Options>
-        <ExecutableType Value="Library"/>
-      </Options>
-    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
