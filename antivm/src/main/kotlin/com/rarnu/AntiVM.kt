@@ -1,7 +1,5 @@
 package com.rarnu
 
-import android.os.Build
-
 object AntiVM {
     init {
         try {
