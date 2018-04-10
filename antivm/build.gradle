@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 android {
     compileSdkVersion 25
@@ -20,13 +22,70 @@ dependencies {
 }
 
 
-//task buildNDK(dependsOn: preBuild) {
-//    print("before build")
-//    exec {
-//        workingDir 'src/main/jni/'
-//        commandLine 'fpccmd', 'AA', 'antivm.ppr'
-//    }
-//}
-
+project.gradle.startParameter.excludedTaskNames.add('lint')
 project.gradle.startParameter.excludedTaskNames.add('compileDebugNdk')
 project.gradle.startParameter.excludedTaskNames.add('compileReleaseNdk')
+project.gradle.startParameter.excludedTaskNames.add('prepareDebugUnitTestDependencies')
+project.gradle.startParameter.excludedTaskNames.add('generateDebugAndroidTestSources')
+
+group = 'com.github.rarnu'
+version = '1.0.0'
+
+signing {
+    sign configurations.archives
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    from android.sourceSets.main.jni.srcDirs
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            pom.project {
+                name project.name
+                packaging 'aar'
+                description 'AntiVM'
+                url 'https://github.com/rarnu/antivm'
+
+                scm {
+                    url 'scm:git@github.com:rarnu/antivm.git'
+                    connection 'scm:git@github.com:rarnu/antivm.git'
+                    developerConnection 'git@github.com:rarnu/antivm.git'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU General Public License v3.0'
+                        url 'https://github.com/rarnu/antivm/blob/master/LICENSE'
+                        distribution 'rarnu'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'rarnu'
+                        name 'rarnu'
+                        email '123909566@qq.com'
+                    }
+                }
+            }
+        }
+    }
+}
